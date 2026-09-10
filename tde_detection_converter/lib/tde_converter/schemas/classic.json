@@ -1,0 +1,495 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 67
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "production",
+        "experimental",
+        "deprecated"
+      ]
+    },
+    "type": {
+      "enum": [
+        "TTP",
+        "Anomaly",
+        "Correlation",
+        "Hunting"
+      ],
+      "type": "string"
+    },
+    "search": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data_source": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "how_to_implement": {
+      "type": "string",
+      "minLength": 4
+    },
+    "known_false_positives": {
+      "type": "string",
+      "minLength": 4
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "enabled_by_default": {
+      "type": "boolean"
+    },
+    "tags": {
+      "type": "object",
+      "properties": {
+        "analytic_story": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "asset_type": {
+          "enum": [
+            "AWS Account",
+            "AWS EKS Kubernetes cluster",
+            "AWS Federated Account",
+            "AWS Instance",
+            "Account",
+            "Amazon EKS Kubernetes cluster",
+            "Amazon EKS Kubernetes cluster Pod",
+            "Amazon Elastic Container Registry",
+            "Azure Tenant",
+            "Azure AKS Kubernetes cluster",
+            "Azure Active Directory",
+            "CircleCI",
+            "Cloud Compute Instance",
+            "Cloud Instance",
+            "DNS Servers",
+            "Database Server",
+            "Domain Server",
+            "EC2 Snapshot",
+            "Endpoint",
+            "GCP",
+            "GCP Account",
+            "GCP GKE EKS Kubernetes cluster",
+            "GCP GKE Kubernetes cluster",
+            "GCP Kubernetes cluster",
+            "GCP Storage Bucket",
+            "GDrive",
+            "GSuite",
+            "GitHub",
+            "Google Cloud Platform tenant",
+            "Identity",
+            "Infrastructure",
+            "Instance",
+            "Kubernetes",
+            "Network",
+            "O365 Tenant",
+            "Okta Tenant",
+            "Proxy",
+            "S3 Bucket",
+            "Splunk Server",
+            "VPN Appliance",
+            "Web Server",
+            "Web Proxy",
+            "Web Application",
+            "Windows"
+          ],
+          "type": "string"
+        },
+        "product": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Splunk Enterprise",
+              "Splunk Enterprise Security",
+              "Splunk Cloud"
+            ]
+          },
+          "minItems": 1
+        },
+        "security_domain": {
+          "enum": [
+            "endpoint",
+            "network",
+            "threat",
+            "identity",
+            "access",
+            "audit"
+          ],
+          "type": "string"
+        },
+        "mitre_attack_id": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^T\\d{4}(\\.\\d{3})?$"
+          }
+        },
+        "manual_test": {
+          "type": "string",
+          "minLength": 4
+        },
+        "throttling": {
+          "type": "object",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[^ ]+$"
+              },
+              "minItems": 1
+            },
+            "period": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[0-9]+[smh]$"
+            }
+          },
+          "required": [
+            "fields",
+            "period"
+          ],
+          "additionalProperties": false
+        },
+        "cve": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CVE-\\d{4}-\\d{4,7}$"
+          }
+        },
+        "group": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "analytic_story",
+        "asset_type",
+        "product",
+        "security_domain"
+      ],
+      "additionalProperties": false
+    },
+    "rba": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "risk_objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "system",
+                  "user",
+                  "other"
+                ],
+                "type": "string"
+              },
+              "score": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              }
+            },
+            "required": [
+              "field",
+              "type",
+              "score"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "threat_objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "certificate_common_name",
+                  "certificate_organization",
+                  "certificate_serial",
+                  "certificate_unit",
+                  "command",
+                  "domain",
+                  "email_address",
+                  "email_subject",
+                  "file_hash",
+                  "file_name",
+                  "file_path",
+                  "http_user_agent",
+                  "ip_address",
+                  "process",
+                  "process_name",
+                  "parent_process",
+                  "parent_process_name",
+                  "process_hash",
+                  "registry_path",
+                  "registry_value_name",
+                  "registry_value_text",
+                  "service",
+                  "signature",
+                  "system",
+                  "tls_hash",
+                  "url"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "message",
+        "risk_objects",
+        "threat_objects"
+      ],
+      "additionalProperties": false
+    },
+    "deployment": {
+      "type": "object",
+      "properties": {
+        "scheduling": {
+          "type": "object",
+          "properties": {
+            "cron_schedule": {
+              "type": "string"
+            },
+            "earliest_time": {
+              "type": "string"
+            },
+            "latest_time": {
+              "type": "string"
+            },
+            "schedule_window": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "cron_schedule",
+            "earliest_time",
+            "latest_time",
+            "schedule_window"
+          ],
+          "additionalProperties": false
+        },
+        "alert_action": {
+          "type": "object",
+          "properties": {
+            "rba": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "enabled"
+              ],
+              "additionalProperties": false
+            },
+            "notable": {
+              "type": "object",
+              "properties": {
+                "rule_title": {
+                  "type": "string"
+                },
+                "rule_description": {
+                  "type": "string"
+                },
+                "nes_fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "rule_title",
+                "rule_description",
+                "nes_fields"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "rba"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "scheduling",
+        "alert_action"
+      ],
+      "additionalProperties": false
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attack_data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "type": "string"
+                },
+                "sourcetype": {
+                  "type": "string"
+                },
+                "custom_index": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "data",
+                "source",
+                "sourcetype"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "attack_data"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "drilldown_searches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 5
+          },
+          "search": {
+            "type": "string",
+            "minLength": 1
+          },
+          "earliest_offset": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "latest_offset": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "search",
+          "earliest_offset",
+          "latest_offset"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "name",
+    "id",
+    "version",
+    "date",
+    "author",
+    "description",
+    "status",
+    "type",
+    "search",
+    "how_to_implement",
+    "known_false_positives",
+    "tags",
+    "deployment",
+    "enabled_by_default"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "SplString": {
+      "type": "string"
+    }
+  },
+  "title": "TDE structural contract derived from contentctl v5.5.1 and v5.6.0; repository validation is separate"
+}

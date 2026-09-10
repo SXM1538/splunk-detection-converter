@@ -1,0 +1,11 @@
+<dashboard version="1.1" script="converter.js" stylesheet="converter.css">
+  <label>Detection YAML Converter</label>
+  <description>Convert saved searches into versioned contentctl or custom YAML.</description>
+  <row>
+    <panel>
+      <html>
+        <div id="tde-converter"><p>Loading Detection Converter…</p></div>
+      </html>
+    </panel>
+  </row>
+</dashboard>
