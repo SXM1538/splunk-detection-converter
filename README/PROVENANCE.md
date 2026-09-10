@@ -1,6 +1,6 @@
 # Profile provenance and dependency inventory
 
-Profiles are fixed at app version 1.0.0. The app performs no runtime schema downloads.
+Profiles are unchanged from 1.0.0 and bundled in app version 1.0.1. The app performs no runtime schema downloads.
 
 ## Classic profiles
 
@@ -33,7 +33,7 @@ The source ZIP includes `upstream-sha256.json`, recording hashes of the inspecte
 | --- | --- | --- | --- |
 | Splunk SDK for Python | 2.1.0 | Apache-2.0 | `lib/splunklib`; fetched from the official release tag |
 | PyYAML | 6.0.3 | MIT | Pure-Python `lib/yaml`; optional compiled extension excluded |
-| JSZip | 3.10.1 | MIT or GPLv3; used under MIT | `appserver/static/vendor/jszip.min.js` |
+| JSZip | 3.10.1 | MIT or GPLv3; used under MIT | `appserver/static/vendor/jszip.browser.min.js` |
 | Splunk security_content schema | Pinned commit above | Apache-2.0 | Original schema JSON |
 
 Licence texts are included under the app's `README/` directory. New code and app icons are MIT-licensed. No external browser scripts, fonts, tracking or content delivery networks are used by the installed app.
@@ -45,4 +45,8 @@ Licence texts are included under the app's `README/` directory. New code and app
 - [commands.conf](https://help.splunk.com/en?resourceId=Splunk_Admin_commandsconf)
 - [Splunk Python search-command SDK](https://splunk-python-sdk.readthedocs.io/en/latest/searchcommands.html)
 
-The REST adapter explicitly requests the caller session and disables system authentication. The command uses SCP2's non-distributed streaming configuration, which the SDK encodes as `type=stateful` in its getinfo response.
+Version 1.0.1 removes the custom REST adapter. The browser submits fixed searches using the built-in Splunk session. The command uses SCP2's non-distributed streaming configuration, which the SDK encodes as `type=stateful` in its getinfo response.
+
+## Browser-only JSZip adaptation in 1.0.1
+
+The original JSZip 3.10.1 minified distribution is retained except for bundled module 16: its optional external `require("stream")` is replaced with an empty module export. This disables Node-stream support and prevents RequireJS from trying to load Node modules. Browser Blob, DEFLATE compression and ZIP load/generate paths are tested. The changed filename `jszip.browser.min.js` avoids reusing the previous module cache. The upstream licence notice remains intact. Node is only a development-test runtime and is not bundled.

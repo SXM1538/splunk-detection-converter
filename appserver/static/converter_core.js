@@ -94,7 +94,7 @@
             }
             entries.push(entry);
         });
-        var manifest = {format_version: 1, converter_version: "1.0.0", created_at: new Date().toISOString(), options: options,
+        var manifest = {format_version: 1, converter_version: "1.0.1", created_at: new Date().toISOString(), options: options,
             include_drafts: Boolean(includeDrafts), counts: counts, entries: entries};
         files.set("manifest.json", {path: "manifest.json", content: JSON.stringify(manifest, null, 2) + "\n"});
         files.set("readme.txt", {path: "README.txt", content: "TDE Detection Converter\n\n" +

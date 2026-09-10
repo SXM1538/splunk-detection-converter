@@ -1,18 +1,24 @@
-# TDE Detection Converter 1.0.0
+# TDE Detection Converter 1.0.1
 
 A Splunk app for turning UI-created saved searches into YAML. Includes a searchable picker, single-file preview, batch conversion, direct YAML/ZIP/JSON downloads, versioned output profiles and custom field selection.
 
 ## Install
 
 1. In Splunk Web, open **Apps → Manage Apps → Install app from file**.
-2. Upload `tde_detection_converter-1.0.0.tar.gz` and restart Splunk if requested.
+2. Upload `splunk_detection_converter-1.0.1.tar.gz` and complete the platform-required restart. Hard-refresh the dashboard afterwards.
 3. Open **TDE Detection Converter → Detection YAML Converter**.
 4. Select detections, choose a format, supply missing metadata, then select **Convert selected**.
 5. Review the results. Download a single YAML or a ZIP containing all exportable results.
 
 The package includes its Python SDK, pure-Python YAML dependency and browser ZIP library. No pip/npm installation, outbound internet access, service account, scheduled searches or changes to saved searches are needed at runtime. Install on the search head. Search-head-cluster and Splunk Cloud deployments must use their normal app installation process.
 
-Designed for Splunk Enterprise 9.x/10.x running Python 3.9 or newer with Classic Simple XML dashboards. A real Splunk installation, Splunk Cloud vetting and Splunkbase AppInspect have **not** been run in the development environment. See `docs/VALIDATION.md` for the precise test coverage and release gates.
+Designed for Splunk Enterprise 9.x/10.x running Python 3.9 or newer with Classic Simple XML dashboards. Live Splunk installation and hosted Cloud/Splunkbase vetting have **not** been run here. A local Cloud-tag AppInspect check is documented in `docs/APPINSPECT.md`. See `docs/VALIDATION.md` for the precise test coverage and release gates.
+
+## Updating the renamed work app
+
+Replace the `splunk_detection_converter/` source folder cleanly, keeping your existing work `.gitlab-ci.yml`. Do not merge the old handler back into the new folder. `default/restmap.conf` and `default/web.conf` are intentionally comment-only to replace the old default endpoint registrations. Any converter-specific `local/` overrides must also be removed; see `docs/SECURITY_REVIEW.md`.
+
+No Node.js installation is required. The app uses Splunk's Python and browser JavaScript. No custom REST endpoint, system token, outbound service or scheduled/background job is added. Search jobs use the current user and the command is app-scoped.
 
 ## Output formats
 
@@ -86,7 +92,7 @@ Checkboxes select mapped fields or complete dependent groups such as `rba` and `
 
 The ZIP contains `manifest.json`, `README.txt` and one file per exportable detection. The manifest accounts for every selected source, including failed, missing, cancelled and non-exported drafts, and records the submitted options, issues, dependencies and relevant original settings. Downloads may contain internal SPL and configuration, so handle them as detection source code.
 
-Selections survive filters and pagination. **Select all matching** selects the complete loaded match set, not just the current page. Refresh detects incomplete/repeated catalogue pages. Conversion uses sequential batches of 25 identities over POST, not a giant title-based SPL token. A failed batch does not stop later batches. Cancel finishes the current request and records the remaining selections as cancelled. Downloads always use the last completed option snapshot; changing conversion inputs invalidates the old results.
+Selections survive filters and pagination. **Select all matching** selects the complete loaded match set, not just the current page. Refresh detects incomplete/repeated catalogue pages. Conversion uses sequential batches of 25 identities via Splunk search jobs. The fixed REST pipeline rereads saved-search metadata for each batch; it does not execute detection SPL. Selections and overrides enter the command as base64 JSON, never as a title-based SPL clause. A failed batch does not stop later batches. Cancel finishes the current request and records the remaining selections as cancelled. Downloads always use the last completed option snapshot; changing conversion inputs invalidates the old results.
 
 Existing UUID collisions across selected sources are flagged; the converter does not silently rewrite those IDs. Duplicate archive paths are rejected rather than overwritten.
 
@@ -109,7 +115,7 @@ For Custom YAML:
 | convertdetection profile=custom fields="name,id,search,rba,cron_schedule,next_steps"
 ```
 
-Advanced options can be passed as UTF-8 JSON encoded in standard base64 through `options_b64`. This avoids ambiguous SPL quoting. The dashboard uses the REST API rather than embedding options in SPL.
+Advanced options can be passed as UTF-8 JSON encoded in standard base64 through `options_b64`. This avoids ambiguous SPL quoting. The dashboard submits fixed search jobs with base64 JSON options; base64 is not encryption, and those options may appear in Splunk job/audit records. There is no custom REST endpoint.
 
 ## Offline tools
 
@@ -135,7 +141,7 @@ python tools/build.py
 
 The development server binds to localhost and uses synthetic fixtures only. It is excluded from the installable Splunk app. It exercises the production UI and conversion engine but does not emulate Splunk authentication or the entire Splunk Web shell.
 
-`bin/convert_detection.py` and `bin/tde_converter_rest.py` are thin adapters. `lib/tde_converter/core.py` holds the conversion boundary; `profiles.py` and `schemas/` define targets; `service.py` controls catalogue paging and selected-source conversion. The browser's shared batch/archive logic is independently testable in `converter_core.js`.
+`bin/convert_detection.py` implements the search-command boundary. `converter_search.js` uses Splunk's existing authenticated search-job API. The custom REST handler has been removed. `lib/tde_converter/core.py` holds the conversion boundary; `profiles.py` and `schemas/` define targets; `service.py` contains shared validation and offline fixture helpers. `converter_profiles.js` is generated from the Python profile catalogue at build time. The browser's shared batch/archive logic is independently testable in `converter_core.js`.
 
 This release reconstructs the converter from the supplied source excerpts and implements the missing picker/export path. Parity dashboards are outside this converter package; their original files were not available.
 

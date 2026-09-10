@@ -6,7 +6,7 @@
     function mount(root, request, Core, JSZip) {
         // Only this fixed template uses HTML. Every source/result string is assigned through textContent/value.
         root.innerHTML = '<div class="tde-app">' +
-          '<header class="tde-heading"><div><span class="tde-eyebrow">DETECTION AS CODE</span><h1>From saved search to YAML.</h1><p>Choose your detections. Set your format. Take your content with you.</p></div><span id="tde-version" class="tde-version">v1.0.0</span></header>' +
+          '<header class="tde-heading"><div><span class="tde-eyebrow">DETECTION AS CODE</span><h1>From saved search to YAML.</h1><p>Choose your detections. Set your format. Take your content with you.</p></div><span id="tde-version" class="tde-version">v1.0.1</span></header>' +
           '<div id="tde-message" class="tde-message" role="status" aria-live="polite">Loading profiles and saved searches…</div>' +
           '<div class="tde-workspace"><section class="tde-card tde-picker"><div class="tde-section-title"><h2><span>1</span> Choose detections</h2><button id="tde-refresh" type="button">Refresh</button></div>' +
           '<div class="tde-filter"><label for="tde-filter">Filter by title, app or owner</label><input id="tde-filter" type="search" placeholder="Search saved searches…"/><label class="tde-check"><input id="tde-detections-only" type="checkbox" checked/> Detection actions only</label></div>' +
